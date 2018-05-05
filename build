@@ -1,0 +1,5 @@
+#!/bin/bash
+
+# Build and zip for linux on aws lambda
+GOOS=linux GOARCH=amd64 go build -o bin/main cmd/main/main.go
+zip main.zip bin/main
