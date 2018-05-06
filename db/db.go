@@ -1,8 +1,9 @@
 package db
 
 import (
-	"github.com/globalsign/mgo"
 	"github.com/moxuz/price-protection-notifier/config"
+	"gopkg.in/mgo.v2"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type DB struct {
@@ -10,8 +11,9 @@ type DB struct {
 }
 
 type Check struct {
-	URL   string
-	Fails int
+	URL   string `bson:"url"`
+	Fails int    `bson:"fails"`
+	ID    int    `bson:"_Id"`
 }
 
 func NewDB() (*DB, error) {
@@ -23,5 +25,16 @@ func NewDB() (*DB, error) {
 	return &DB{C: c}, nil
 }
 
-func (d *DB) GetAll() {
+func (d *DB) GetAll() ([]*Check, error) {
+	results := []*Check{}
+	iter := d.C.Find(bson.M{}).Iter()
+	err := iter.All(results)
+	if err != nil {
+		return nil, err
+	}
+	return results, nil
+}
+
+func (d *DB) MarkFailed(check *Check) error {
+	return nil
 }

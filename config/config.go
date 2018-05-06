@@ -8,10 +8,12 @@ var (
 	MongoURL        string
 	MongoDB         string
 	MongoCollection string
+	NotifyAddress   string
 )
 
 func init() {
-	MongoURL = os.Getenv("mongo_url")
-	MongoDB = os.Getenv("mongo_db")
-	MongoCollection = os.Getenv("mongo_collection")
+	MongoURL = os.Getenv("MONGO_URL")
+	MongoDB = os.Getenv("MONGO_DB")
+	MongoCollection = os.Getenv("MONGO_COLLECTION")
+	NotifyAddress = os.Getenv("EMAIL_ADDRESS")
 }
