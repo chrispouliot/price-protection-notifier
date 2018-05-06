@@ -11,9 +11,10 @@ type DB struct {
 }
 
 type Check struct {
-	URL   string `bson:"url"`
-	Fails int    `bson:"fails"`
-	ID    int    `bson:"_Id"`
+	LastPrice float32 `bson:"price"`
+	URL       string  `bson:"url"`
+	Fails     int     `bson:"fails"`
+	ID        int     `bson:"_Id"`
 }
 
 func NewDB() (*DB, error) {

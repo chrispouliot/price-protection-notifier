@@ -11,10 +11,16 @@ func handler() {
 	if err != nil {
 		panic(err)
 	}
-	cr := check.NewRunner(d)
+	cr, err := check.NewRunner(d)
+	if err != nil {
+		panic(err)
+	}
 	for r := range cr.RunAll() {
+		if r.Error != nil {
+			// Notify of error!
+		}
 		if r.Changed {
-			// Notify!
+			// Notify of price change!
 		}
 	}
 }
