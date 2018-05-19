@@ -3,11 +3,11 @@ package check
 import (
 	"errors"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"sync"
 
 	"github.com/moxuz/price-protection-notifier/db"
+	"github.com/moxuz/price-protection-notifier/parse"
 )
 
 type CheckRunner struct {
@@ -17,6 +17,7 @@ type CheckRunner struct {
 type Result struct {
 	Error   error
 	Changed bool
+	Price   float64
 	URL     string
 }
 
@@ -49,18 +50,18 @@ func (r *CheckRunner) run(c chan *Result, check *db.Check, wg sync.WaitGroup) {
 		c <- &Result{Error: err}
 		return
 	}
+	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
 		c <- &Result{Error: errors.New(fmt.Sprintf(
 			"Request returned status of %d: %s", resp.StatusCode, resp.Status,
 		))}
 		return
 	}
-	html, err := ioutil.ReadAll(resp.Body)
+
+	price, err := parse.GetPrice(resp.Body)
 	if err != nil {
 		c <- &Result{Error: err}
 		return
 	}
-	defer resp.Body.Close()
-	price := PriceFromHTML(html)
-	c <- &Result{URL: check.URL, Changed: price < check.LastPrice}
+	c <- &Result{URL: check.URL, Changed: price < check.LastPrice, Price: price}
 }

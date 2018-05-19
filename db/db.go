@@ -11,7 +11,7 @@ type DB struct {
 }
 
 type Check struct {
-	LastPrice float32 `bson:"price"`
+	LastPrice float64 `bson:"price"`
 	URL       string  `bson:"url"`
 	Fails     int     `bson:"fails"`
 	ID        int     `bson:"_Id"`
@@ -22,14 +22,15 @@ func NewDB() (*DB, error) {
 	if err != nil {
 		return nil, err
 	}
+	session.SetSafe(&mgo.Safe{})
 	c := session.DB(config.MongoDB).C(config.MongoCollection)
 	return &DB{C: c}, nil
 }
 
 func (d *DB) GetAll() ([]*Check, error) {
-	results := []*Check{}
+	var results []*Check
 	iter := d.C.Find(bson.M{}).Iter()
-	err := iter.All(results)
+	err := iter.All(&results)
 	if err != nil {
 		return nil, err
 	}

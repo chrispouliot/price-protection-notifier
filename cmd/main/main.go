@@ -11,11 +11,12 @@ func handler() {
 	if err != nil {
 		panic(err)
 	}
-	cr, err := check.NewRunner(d)
+	cr := check.NewRunner(d)
+	checks, err := cr.RunAll()
 	if err != nil {
 		panic(err)
 	}
-	for r := range cr.RunAll() {
+	for r := range checks {
 		if r.Error != nil {
 			// Notify of error!
 		}

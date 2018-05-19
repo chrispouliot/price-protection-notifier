@@ -2,6 +2,18 @@
 
 
 [[projects]]
+  name = "github.com/PuerkitoBio/goquery"
+  packages = ["."]
+  revision = "a86ea073017a6beddef78c8659e7224e8ca634b0"
+  version = "v1.4.0"
+
+[[projects]]
+  name = "github.com/andybalholm/cascadia"
+  packages = ["."]
+  revision = "901648c87902174f774fac311d7f176f8647bdaa"
+  version = "v1.0.0"
+
+[[projects]]
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "lambda",
@@ -10,6 +22,36 @@
   ]
   revision = "fafa7e49388b8991caf99308e80655ba91816b72"
   version = "v1.1.0"
+
+[[projects]]
+  name = "github.com/davecgh/go-spew"
+  packages = ["spew"]
+  revision = "346938d642f2ec3594ed81d874461961cd0faa76"
+  version = "v1.1.0"
+
+[[projects]]
+  name = "github.com/pmezard/go-difflib"
+  packages = ["difflib"]
+  revision = "792786c7400a136282c1664665ae0a8db921c6c2"
+  version = "v1.0.0"
+
+[[projects]]
+  name = "github.com/stretchr/testify"
+  packages = [
+    "assert",
+    "require"
+  ]
+  revision = "12b6f73e6084dad08a7c6e575284b177ecafbc71"
+  version = "v1.2.1"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = [
+    "html",
+    "html/atom"
+  ]
+  revision = "57065200b4b034a1c8ad54ff77069408c2218ae6"
 
 [[projects]]
   branch = "v2"
@@ -26,6 +68,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "baf01e305596209da1d95e286e7b3ba6db852aa0eaef0ec6d47a066fa7f761f3"
+  inputs-digest = "c9c7dd650da02c42ac53293e93c318d3214d8e3b86fc3487d6074cca0473699d"
   solver-name = "gps-cdcl"
   solver-version = 1
