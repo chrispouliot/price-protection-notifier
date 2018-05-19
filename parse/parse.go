@@ -1,23 +1,22 @@
 package parse
 
 import (
-	"io"
-
-	"regexp"
-
-	"strconv"
-
 	"errors"
+	"io"
+	"regexp"
+	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
 var (
-	ErrNoPrice             = errors.New("unable to find price")
-	priceRegex             = `[-+]?\d*\.\d+|\d+`
+	ErrNotFound            = errors.New("unable to find price")
+	priceRegex             = `[-+]?\d*\.\d+|\d+` // https://regex101.com/r/mWnOj3/2
 	possiblePriceSelectors = []string{
 		".prodprice",
-		"#priceblock_ourprice"}
+		".ProductPricing",
+		"#price",
+	}
 )
 
 func GetPrice(body io.ReadCloser) (float64, error) {
@@ -27,25 +26,41 @@ func GetPrice(body io.ReadCloser) (float64, error) {
 	}
 	var found bool
 	var price float64
-	for _, s := range possiblePriceSelectors {
-		selector := doc.Find(s).First()
-		priceString := selector.Find("span").Text()
-		if priceString != "" {
-			re := regexp.MustCompile(priceRegex)
-			priceList := re.FindAllString(priceString, 1)
-			if len(priceList) > 0 {
-				price, err = strconv.ParseFloat(priceList[0], 64)
-				if err != nil {
-					return 0, nil
-				}
-				found = true
-				break
-			}
+	for _, se := range possiblePriceSelectors {
+		selector := doc.Find(se).First()
+		posPrice, err := searchPriceInChildren(selector.Children())
+		if err == nil {
+			price, found = posPrice, true
+			break
 		}
+		if err == ErrNotFound {
+			continue
+		}
+		return 0, err
 
 	}
 	if !found {
-		return 0, ErrNoPrice
+		return 0, ErrNotFound
 	}
 	return price, nil
+}
+
+func searchPriceInChildren(selection *goquery.Selection) (float64, error) {
+	texts := selection.Map(func(i int, s *goquery.Selection) string {
+		return s.Text()
+	})
+	for _, t := range texts {
+		if t != "" {
+			re := regexp.MustCompile(priceRegex)
+			priceList := re.FindAllString(t, 1)
+			if len(priceList) > 0 {
+				price, err := strconv.ParseFloat(priceList[0], 64)
+				if err != nil {
+					return 0, err
+				}
+				return price, nil
+			}
+		}
+	}
+	return 0, ErrNotFound
 }

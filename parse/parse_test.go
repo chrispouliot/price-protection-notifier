@@ -22,11 +22,29 @@ func TestParseBestBuy(t *testing.T) {
 	require.Equal(t, 869.99, price)
 }
 
+func TestParseAmazon(t *testing.T) {
+	r, err := getHtmlReader("fixtures/amazon.html")
+	require.NoError(t, err)
+
+	price, err := GetPrice(r)
+	require.NoError(t, err)
+	require.Equal(t, 249.95, price)
+}
+
+func TestParseWayfair(t *testing.T) {
+	r, err := getHtmlReader("fixtures/wayfair.html")
+	require.NoError(t, err)
+
+	price, err := GetPrice(r)
+	require.NoError(t, err)
+	require.Equal(t, 310.99, price)
+}
+
 func TestParseNoPrice(t *testing.T) {
 	r, err := getHtmlReader("fixtures/noprice.html")
 	require.NoError(t, err)
 
 	_, err = GetPrice(r)
 	require.Error(t, err)
-	require.Equal(t, err, ErrNoPrice)
+	require.Equal(t, err, ErrNotFound)
 }
