@@ -21,5 +21,5 @@ func Init() {
 	MailNotifyAddress = os.Getenv("MAIL_EMAIL_ADDRESS")
 	MailApiUrl = os.Getenv("MAIL_API_URL")
 	MailAPIKey = os.Getenv("MAIL_API_KEY")
-	MailAPIKey = os.Getenv("MAIL_FROM_ADDRESS")
+	MailFromAddress = os.Getenv("MAIL_FROM_ADDRESS")
 }

@@ -2,19 +2,13 @@ package email
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"net/http"
 
+	"mime/multipart"
+
 	"github.com/moxuz/price-protection-notifier/config"
 )
-
-type ReqBody struct {
-	To      string `json:"to"`
-	From    string `json:"from"`
-	Subject string `json:"subject"`
-	Text    string `json:"text"`
-}
 
 func SendPriceChange(address, checkUrl string, price float64) error {
 	return send(config.MailFromAddress, address, checkUrl, nil, price)
@@ -31,29 +25,33 @@ func send(fromAddress, address, checkUrl string, err error, price float64) error
 	} else {
 		text = fmt.Sprintf("%s price change to $%.2f", text, price)
 	}
-	body := ReqBody{
-		To:      address,
-		From:    fromAddress,
-		Subject: "Price Notifier",
-		Text:    text,
-	}
-	b, err := json.Marshal(body)
-	if err != nil {
-		return err
-	}
-	client := http.Client{}
-	req, err := http.NewRequest("POST", checkUrl, bytes.NewReader(b))
-	if err != nil {
-		return err
-	}
+
+	body, boundary := getPostFormBody(fromAddress, address, text, "Price Notifier Alert")
+	req, err := http.NewRequest("POST", config.MailApiUrl, body)
+	req.Header.Add("Content-Type", fmt.Sprintf("multipart/form-data; boundary=%s", boundary))
 	req.SetBasicAuth("api", config.MailAPIKey)
+
+	client := http.Client{}
 	resp, err := client.Do(req)
-	if err != nil {
-		return err
-	}
+	defer resp.Body.Close()
+
 	if resp.StatusCode >= 300 {
-		return fmt.Errorf("status code %d: %s while attempting to send email", resp.StatusCode, resp.Status)
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(resp.Body)
+		return fmt.Errorf("status code %d: %s (%s) while attempting to send email", resp.StatusCode, resp.Status, buf.String())
 	}
 
 	return nil
+}
+
+func getPostFormBody(fromAddress, address, text, subject string) (*bytes.Buffer, string) {
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	writer.WriteField("from", fromAddress)
+	writer.WriteField("to", address)
+	writer.WriteField("text", text)
+	writer.WriteField("subject", subject)
+	boundary := writer.Boundary()
+	writer.Close()
+	return body, boundary
 }
