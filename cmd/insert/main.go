@@ -6,9 +6,11 @@ import (
 	"strconv"
 
 	"github.com/moxuz/price-protection-notifier/db"
+	"github.com/techdroplabs/dyspatch/web-pilot-idp/config"
 )
 
 func main() {
+	config.Init()
 	args := os.Args[1:]
 	if len(args) < 2 {
 		panic("Invalid arguments")

@@ -4,9 +4,11 @@ import (
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/moxuz/price-protection-notifier/check"
 	"github.com/moxuz/price-protection-notifier/db"
+	"github.com/techdroplabs/dyspatch/web-pilot-idp/config"
 )
 
 func handler() {
+	config.Init()
 	d, err := db.NewDB()
 	if err != nil {
 		panic(err)

@@ -1,6 +1,9 @@
 package db
 
 import (
+	"crypto/tls"
+	"net"
+
 	"github.com/moxuz/price-protection-notifier/config"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -8,6 +11,12 @@ import (
 
 type DB struct {
 	C *mgo.Collection
+}
+
+type insert struct {
+	LastPrice float64 `bson:"price"`
+	URL       string  `bson:"url"`
+	Fails     int     `bson:"fails"`
 }
 
 type Check struct {
@@ -18,7 +27,13 @@ type Check struct {
 }
 
 func NewDB() (*DB, error) {
-	session, err := mgo.Dial(config.MongoURL)
+	dialInfo, err := mgo.ParseURL(config.MongoURL)
+	tlsConfig := &tls.Config{}
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		return conn, err
+	}
+	session, _ := mgo.DialWithInfo(dialInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +62,7 @@ func (d *DB) MarkFailed(check *Check) error {
 }
 
 func (d *DB) Insert(url string, price float64) error {
-	err := d.C.Insert(Check{
+	err := d.C.Insert(insert{
 		LastPrice: price,
 		URL:       url,
 	})
