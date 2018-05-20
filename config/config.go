@@ -5,15 +5,21 @@ import (
 )
 
 var (
-	MongoURL        string
-	MongoDB         string
-	MongoCollection string
-	NotifyAddress   string
+	MongoURL          string
+	MongoDB           string
+	MongoCollection   string
+	MailNotifyAddress string
+	MailApiUrl        string
+	MailAPIKey        string
+	MailFromAddress   string
 )
 
-func init() {
+func Init() {
 	MongoURL = os.Getenv("MONGO_URL")
 	MongoDB = os.Getenv("MONGO_DB")
 	MongoCollection = os.Getenv("MONGO_COLLECTION")
-	NotifyAddress = os.Getenv("EMAIL_ADDRESS")
+	MailNotifyAddress = os.Getenv("MAIL_EMAIL_ADDRESS")
+	MailApiUrl = os.Getenv("MAIL_API_URL")
+	MailAPIKey = os.Getenv("MAIL_API_KEY")
+	MailAPIKey = os.Getenv("MAIL_FROM_ADDRESS")
 }

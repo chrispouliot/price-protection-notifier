@@ -5,8 +5,8 @@ import (
 
 	"strconv"
 
+	"github.com/moxuz/price-protection-notifier/config"
 	"github.com/moxuz/price-protection-notifier/db"
-	"github.com/techdroplabs/dyspatch/web-pilot-idp/config"
 )
 
 func main() {
