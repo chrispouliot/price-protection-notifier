@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/aws/aws-lambda-go/lambda"
+	"fmt"
+
 	"github.com/moxuz/price-protection-notifier/check"
 	"github.com/moxuz/price-protection-notifier/db"
 	"github.com/techdroplabs/dyspatch/web-pilot-idp/config"
@@ -14,20 +15,22 @@ func handler() {
 		panic(err)
 	}
 	cr := check.NewRunner(d)
-	checks, err := cr.RunAll()
+	checks, err := cr.All()
 	if err != nil {
 		panic(err)
 	}
 	for r := range checks {
+		fmt.Println(fmt.Sprintf("Checked %s price is %f change is %t", r.URL, r.Price, r.Changed))
 		if r.Error != nil {
-			// Notify of error!
+			fmt.Println(fmt.Sprintf("Error %s", r.Error))
 		}
 		if r.Changed {
-			// Notify of price change!
+			fmt.Println(fmt.Sprintf("Price changed %.2f", r.Price))
 		}
 	}
 }
 
 func main() {
-	lambda.Start(handler)
+	//lambda.Start(handler)
+	handler()
 }

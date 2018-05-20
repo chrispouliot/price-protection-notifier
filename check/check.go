@@ -10,7 +10,7 @@ import (
 	"github.com/moxuz/price-protection-notifier/parse"
 )
 
-type CheckRunner struct {
+type Runner struct {
 	d *db.DB
 }
 
@@ -21,11 +21,11 @@ type Result struct {
 	URL     string
 }
 
-func NewRunner(db *db.DB) *CheckRunner {
-	return &CheckRunner{d: db}
+func NewRunner(db *db.DB) *Runner {
+	return &Runner{d: db}
 }
 
-func (r *CheckRunner) RunAll() (<-chan *Result, error) {
+func (r *Runner) All() (<-chan *Result, error) {
 	var wg sync.WaitGroup
 	rChan := make(chan *Result)
 	checks, err := r.d.GetAll()
@@ -34,7 +34,7 @@ func (r *CheckRunner) RunAll() (<-chan *Result, error) {
 	}
 	for _, c := range checks {
 		wg.Add(1)
-		go r.run(rChan, c, wg)
+		go r.run(rChan, c, &wg)
 	}
 	go func() {
 		wg.Wait()
@@ -43,7 +43,7 @@ func (r *CheckRunner) RunAll() (<-chan *Result, error) {
 	return rChan, nil
 }
 
-func (r *CheckRunner) run(c chan *Result, check *db.Check, wg sync.WaitGroup) {
+func (r *Runner) run(c chan *Result, check *db.Check, wg *sync.WaitGroup) {
 	defer wg.Done()
 	resp, err := http.Get(check.URL)
 	if err != nil {
