@@ -13,17 +13,9 @@ type DB struct {
 	C *mgo.Collection
 }
 
-type insert struct {
-	LastPrice float64 `bson:"price"`
-	URL       string  `bson:"url"`
-	Fails     int     `bson:"fails"`
-}
-
 type Check struct {
 	LastPrice float64 `bson:"price"`
 	URL       string  `bson:"url"`
-	Fails     int     `bson:"fails"`
-	ID        int     `bson:"_id"`
 }
 
 func NewDB() (*DB, error) {
@@ -52,17 +44,8 @@ func (d *DB) GetAll() ([]*Check, error) {
 	return results, nil
 }
 
-func (d *DB) MarkFailed(check *Check) error {
-	err := d.C.UpdateId(check.ID, struct {
-		Fails int `bson:"fails"`
-	}{
-		Fails: check.Fails + 1,
-	})
-	return err
-}
-
 func (d *DB) Insert(url string, price float64) error {
-	err := d.C.Insert(insert{
+	err := d.C.Insert(Check{
 		LastPrice: price,
 		URL:       url,
 	})

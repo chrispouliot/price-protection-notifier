@@ -51,7 +51,7 @@ func (r *Runner) run(c chan *Result, check *db.Check, wg *sync.WaitGroup) {
 		return
 	}
 	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
+	if resp.StatusCode >= 300 {
 		c <- &Result{Error: errors.New(fmt.Sprintf(
 			"Request returned status of %d: %s", resp.StatusCode, resp.Status,
 		))}
