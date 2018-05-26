@@ -23,9 +23,9 @@ MAIL_FROM_ADDRESS=...
 
 ### Adding products
 
-To add a product to the list of checks, run the `insert` command in the `bin` directory. It will need the Mongo environment variables.
+To add a product to the list of checks, run the `insert` command. It will need the Mongo environment variables.
 
 ```bash
 # Product URL, desired price
-./.insert "https://www.bestbuy.ca/en-ca/product/apple-ipad-pro-10-5-64gb-with-wi-fi-space-grey/10750311.aspx\?" 820.00
+./insert "https://www.bestbuy.ca/en-ca/product/apple-ipad-pro-10-5-64gb-with-wi-fi-space-grey/10750311.aspx\?" 820.00
 ```
