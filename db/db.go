@@ -51,3 +51,12 @@ func (d *DB) Insert(url string, price float64) error {
 	})
 	return err
 }
+
+// Delete removes all checks with the given URL and returns the number of items removed
+func (d *DB) Delete(url string) (int, error) {
+	info, err := d.C.RemoveAll(bson.M{"url": url})
+	if err != nil {
+		return 0, err
+	}
+	return info.Removed, nil
+}
