@@ -21,11 +21,12 @@ MAIL_API_KEY=...
 MAIL_FROM_ADDRESS=...
 ```
 
-### Adding products
+### Interacting with the products database
 
-To add a product to the list of checks, run the `insert` command. It will need the Mongo environment variables.
+The following commands let you interact with the database:
+ - remove
+ - insert
+ - list
+ 
+ They all require the MongoDB environment variables listed above
 
-```bash
-# Product URL, desired price
-./insert "https://www.bestbuy.ca/en-ca/product/apple-ipad-pro-10-5-64gb-with-wi-fi-space-grey/10750311.aspx\?" 820.00
-```

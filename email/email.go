@@ -10,20 +10,20 @@ import (
 	"github.com/moxuz/price-protection-notifier/config"
 )
 
-func SendPriceChange(address, checkUrl string, price float64) error {
-	return send(config.MailFromAddress, address, checkUrl, nil, price)
+func SendPriceChange(address, checkUrl string, price float64, lastPrice float64) error {
+	return send(config.MailFromAddress, address, checkUrl, nil, price, lastPrice)
 }
 
 func SendError(address, checkUrl string, err error) error {
-	return send(config.MailFromAddress, address, checkUrl, err, 0)
+	return send(config.MailFromAddress, address, checkUrl, err, 0, 0)
 }
 
-func send(fromAddress, address, checkUrl string, err error, price float64) error {
+func send(fromAddress, address, checkUrl string, err error, price, lastPrice float64) error {
 	text := fmt.Sprintf("Check %s has", checkUrl)
 	if err != nil {
 		text = fmt.Sprintf("%s error %s", text, err.Error())
 	} else {
-		text = fmt.Sprintf("%s price change to $%.2f", text, price)
+		text = fmt.Sprintf("%s price change to $%.2f from $%0.2f", text, price, lastPrice)
 	}
 
 	body, boundary := getPostFormBody(fromAddress, address, text, "Price Notifier Alert")

@@ -15,10 +15,11 @@ type Runner struct {
 }
 
 type Result struct {
-	Error   error
-	Changed bool
-	Price   float64
-	URL     string
+	Error        error
+	Changed      bool
+	CurrentPrice float64
+	LastPrice    float64
+	URL          string
 }
 
 func NewRunner(db *db.DB) *Runner {
@@ -63,5 +64,5 @@ func (r *Runner) run(c chan *Result, check *db.Check, wg *sync.WaitGroup) {
 		c <- &Result{Error: err}
 		return
 	}
-	c <- &Result{URL: check.URL, Changed: price < check.LastPrice, Price: price}
+	c <- &Result{URL: check.URL, Changed: price < check.LastPrice, CurrentPrice: price, LastPrice: check.LastPrice}
 }
